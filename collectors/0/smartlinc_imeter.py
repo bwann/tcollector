@@ -33,7 +33,7 @@ import time
 import pwd
 from urllib import urlopen
 
-# If we're running as root and this user exists, we'll drop privilegs.
+# If we're running as root and this user exists, we'll drop privileges
 USER = "nobody"
 imeters = {}
 
