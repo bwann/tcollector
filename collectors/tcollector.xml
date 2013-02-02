@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!-- Thanks to http://wiki.openindiana.org/oi/Creating+new+services -->
+<!-- p.s. order of items matters! -->
+
+<service_bundle type="manifest" name="tcollector">
+
+  <service name="application/tcollector" type="service" version="1">
+    <create_default_instance enabled="true" />
+    <single_instance />
+
+    <dependency name='multi-user-server'
+      grouping='require_all'
+      restart_on='error'
+      type='service'>
+      <service_fmri value='svc:/milestone/multi-user-server:default'/>
+    </dependency>
+
+    <exec_method type="method" name="start" exec="/opt/tcollector/startstop start" timeout_seconds="60" />
+    <exec_method type="method" name="stop" exec="/opt/tcollector/startstop stop" timeout_seconds="60" />
+    <exec_method type="method" name="refresh" exec="/opt/tcollector/startstop restart" timeout_seconds="60" />
+
+    <property_group name='startd' type='framework'>
+      <propval name='ignore_error' type='astring' value='core,signal'/>
+    </property_group>
+
+    <stability value="Evolving" />
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C"> OpenTSDB tcollector </loctext>
+      </common_name>
+      <documentation>
+      </documentation>
+    </template>
+
+  </service>
+</service_bundle>
