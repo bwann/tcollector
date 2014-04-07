@@ -1,4 +1,12 @@
 #!/usr/bin/python
+#
+# Tcollector to record electrical current and voltage from Adafruit INA219
+# modules, save to TSD.
+#
+# This script kindly depends on scottjw's Python library at
+# https://github.com/scottjw/subfact_pi_ina219
+# along with 2's compliment patching.
+#
 
 import os
 import pwd
@@ -6,6 +14,7 @@ import sys
 import time
 from lib.Subfact_ina219 import INA219
 
+# Human-readable label to i2c address mappings
 ina219_modules = {
   'load': '0x40',
   'battery': '0x41',
