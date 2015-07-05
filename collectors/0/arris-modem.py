@@ -11,6 +11,10 @@ this is at 192.168.100.1 and the page is unauthenticated. This should just
 work on your network even if your LAN isn't numbered 192.168.100.x, as
 192.168.100.1 is "upstream" of your router.
 
+This collects from the modem every 30 seconds ('interval = 30' in main()).
+It takes about 6 seconds to return the page so there's not much sense to
+poll faster.
+
 Note: This depends on BeautifulSoup 3 (maybe works with 4?). On CentOS you'll
 want to install the python-BeautifulSoup package.
 
