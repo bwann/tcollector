@@ -11,6 +11,9 @@ this is at 192.168.100.1 and the page is unauthenticated. This should just
 work on your network even if your LAN isn't numbered 192.168.100.x, as
 192.168.100.1 is "upstream" of your router.
 
+Note: This depends on BeautifulSoup 3 (maybe works with 4?). On CentOS you'll
+want to install the python-BeautifulSoup package.
+
 Global metrics:
 arris.req.time_s    How many seconds it took to fetch the status page
 arris.uptime        Uptime of modem in seconds
