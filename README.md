@@ -25,7 +25,7 @@ Custom and exotic tcollectors for OpenTSDB
 `collectors/0/smartctl_stat.py` -
   SMART data collector
 
-Solaris/OpenIndiana tcollector goodies:
+#### Solaris/OpenIndiana tcollector goodies
 
 `chef-openindiana-smf-example.rb` -
   Example chef recipe to install the tcollector SMF manifest
@@ -34,13 +34,11 @@ Solaris/OpenIndiana tcollector goodies:
   Simple tcollector SMF service manifest for OpenIndiana
   (OpenSolaris/Solaris 11 too?)
 
-
-Bugs? Clown town? Send me pull requests
-
-
-Disclaimer:
+### Disclaimer
 I am providing code in this repository to you under an open source license.
 Because this is my personal repository, the license you receive to my code
 is from me and not from my employer (Facebook).
+
+Bugs? Clown town? Send me pull requests
 
 --bwann
