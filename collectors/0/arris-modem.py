@@ -53,8 +53,8 @@ import time
 import urllib2
 from BeautifulSoup import BeautifulSoup
 
-# If we're running as root and this user exists, we'll drop privileges.  Set this
-# to 'root' if you don't want to drop privileges.
+# If we're running as root and this user exists, we'll drop privileges. Set
+# this to 'root' if you don't want to drop privileges.
 USER = "nobody"
 
 def drop_privileges():
@@ -86,7 +86,7 @@ def main():
         if value is not None:
             print "arris.%s %d %s %s" % (metric, ts, value, tags)
 
-    def parse_swinfo(rows, table):
+    def parse_swinfo(rows):
         for row in rows:
             cols = row.findAll('td')
             if not cols:
@@ -100,19 +100,21 @@ def main():
 
     def parse_uptime(uptime):
         # Will this thing ever print years?
-        m = re.match('(\d+)\s+days\s+(\d+)h:(\d+)m:(\d+)s',
+        m = re.match(r'(\d+)\s+days\s+(\d+)h:(\d+)m:(\d+)s',
                      uptime,
                      re.IGNORECASE)
         uptime_seconds = (
             (int(m.group(1)) * 86400) +
             (int(m.group(2)) * 3600) +
-            (int(m.group(3)) * 60)
+            (int(m.group(3)) * 60) +
+            int(m.group(4))
         )
 
         print_stat('uptime', uptime_seconds)
 
     def parse_table(rows, table):
 
+        # Map text to a value
         def modulation_dict(text):
             return {
                 'QAM256': 256,
@@ -121,6 +123,7 @@ def main():
                 'QPSK': 4,
             }.get(text, -1)
 
+        # Map text to a value
         def channeltype_dict(text):
             return {
                 'ATDMA': 1,
@@ -164,10 +167,10 @@ def main():
                 print_stat('down.snr_db', snr, tags)
                 print_stat('down.corrected_errors', corrected, tags)
                 print_stat('down.uncorrected_errors', uncorrected, tags)
-                print_stat('down.total_errors', uncorrected, tags)
+                print_stat('down.total_errors', total_errors, tags)
 
             if table == 'upstream':
-                lock_status = cols[1]          
+                lock_status = cols[1]
                 channel_type = channeltype_dict(cols[2])
                 channel_id = cols[3]
                 symbol_rate = cols[4].split()[0]
@@ -195,20 +198,20 @@ def main():
         tags = ''
 
         pages = {
-          'status': 'RgConnect.asp',
-          'swinfo': 'RgSwInfo.asp',
+            'status': 'RgConnect.asp',
+            'swinfo': 'RgSwInfo.asp',
         }
 
         for key, pagename in pages.iteritems():
             starttime = time.time()
             try:
                 req = urllib2.urlopen("http://192.168.100.1/%s" % pagename)
+            except urllib2.HTTPError, e:
+                print >> sys.stderr, ("urlopen http error for %s: %s" %
+                                      (pagename, e.code))
             except urllib2.URLError, e:
                 print >> sys.stderr, ("urlopen url error for %s: %s" %
-                    (pagename, e.args))
-            except urllib2.HTTPError, e:
-                 print >> sys.stderr, ("urlopen http error for %s: %s" %
-                     (pagename, e.code))
+                                      (pagename, e.args))
             endtime = time.time()
             reqtime = endtime - starttime
 
@@ -219,7 +222,7 @@ def main():
                 soup = BeautifulSoup(req.read())
                 req.close()
                 alltables = soup.findAll('table')
-            
+
                 for table in alltables:
                     headers = table.findAll('th')
                     for header in headers:
@@ -230,15 +233,15 @@ def main():
                             parse_table(table.findAll('tr'),
                                         table='upstream')
                         if key == 'swinfo' and 'Status' in str(header):
-                            parse_swinfo(table.findAll('tr'), table='status')
+                            parse_swinfo(table.findAll('tr'))
 
             else:
-                print >> sys.stderr, "modem returned http code: %s" % req.getcode()
+                print >> sys.stderr, ("modem returned http code: %s" %
+                                      req.getcode())
 
         req.close()
         sys.stdout.flush()
         time.sleep(interval)
-
 
 if __name__ == "__main__":
     sys.exit(main())
