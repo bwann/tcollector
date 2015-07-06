@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+#
 """A collector to get electricty usage from an Insteon iMeter via SmartLinc"""
 #
 # smartlinc_imeter.py
@@ -15,17 +16,19 @@
 # Insteon SmartLinc 2412N. The 2412N has ethernet and runs a  basic web
 # interface which can be used to access the current power readings of one or
 # multiple iMeter devices.
-# 
+#
 # With a little reverse engineering of the ajax form submission and tcpdump,
 # I was able to figure out which URLs to directly fetch when polling the
 # SmartLinc for iMeter power readings. This also provides a resetable
 # "accumulated" power value which is basically a counter of watts.
-# 
+#
 # It's worth noting this isn't the only way to do this. iMeters can also be
 # accessed by controllers with a USB interface, or some controllers can record
 # iMeter readings in CSVs. These cases aren't covered here.
 #
 # Written by Bryan Wann <bwann [at] wann.net>
+#
+# vim: syntax=python:expandtab:shiftwidth=4:softtabstop=4:tabstop=4
 
 import os
 import sys
@@ -71,7 +74,7 @@ def poll_smartlinc(address, device):
     url = "http://" + address + "/3?0262" + device + "0F8200=I=3"
     req = urlopen(url).read()
     if req is None:
-      return
+        return
     # fetch the buffer for the response
     buffer = urlopen("http://" + address + "/buffstatus.xml").read()
 
@@ -79,16 +82,16 @@ def poll_smartlinc(address, device):
         # response buffer empty
         return
 
-    buffer = (buffer.replace("<response><BS>", "" )
+    buffer = (buffer.replace("<response><BS>", "")
               .replace("</BS></response>", ""))
 
     # make sure the expected response is in the right spot
     if buffer[41:44] == "251":
         r_device = buffer[44:50]
         r_cmd = buffer[58:60]
-        r_true = int(buffer[74:78],16)
-        r_total = int(buffer[78:86],16)
-        return [ r_true, r_total ]
+        r_true = int(buffer[74:78], 16)
+        r_total = int(buffer[78:86], 16)
+        return [r_true, r_total]
 
     return
 
@@ -100,6 +103,7 @@ def main():
 
     config_file = os.path.dirname(sys.argv[0]) + "/../etc/imeter.conf"
     if not os.path.exists(config_file):
+        print >> sys.stderr, "config file %s not found" % config_file
         sys.exit(13)
 
     config = open(config_file)
@@ -121,13 +125,13 @@ def main():
         # interval!
         for addr in imeters:
             for deviceid in imeters[addr]:
-                data = poll_smartlinc( addr, deviceid )
+                data = poll_smartlinc(addr, deviceid)
                 if data:
-                    [ watts, total ] = data
+                    [watts, total] = data
                     print ("insteon.imeter.watt %s %d controller=%s device=%s"
-                    % ( ts, watts, addr, deviceid ))
+                           % (ts, watts, addr, deviceid))
                     print ("insteon.imeter.total %s %d controller=%s device=%s"
-                    % ( ts, total, addr, deviceid ))
+                           % (ts, total, addr, deviceid))
 
         sys.stdout.flush()
         time.sleep(interval)
