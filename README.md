@@ -12,15 +12,21 @@ Custom and exotic tcollectors for OpenTSDB
   Collects up/downstream channel information from a Motorola/Arris cable
   modem. May be sort of brittle since I only have one model to test with.
 
+  * Screenshot of modem status page: arris_modem_status_example.png
+  * Poor man's cablemodem dashboard example: arris_modem_tcollector_example.png
+
 `collectors/0/ina219_power.py` -
   Recording electrical current/voltage values via i2c and Adafruit INA219
   modules. Example, with Raspberry Pi for solar power logging.
 
 `collectors/0/smartlinc_imeter.py` -
   Grab watt information from Insteon iMeters via the web interface of
-  SmartLinc controllers and put into TSD
+  SmartLinc controllers and put into TSD. I've since moved on to Ubiquiti's
+  mPower kit.
 
   (This is also my first from-scratch python script after a decade of perl!)
+
+  * Screenshot of iMeter power charts: martlinc-imeter-tcollector-example.png
 
 `collectors/0/smartctl_stat.py` -
   SMART data collector
