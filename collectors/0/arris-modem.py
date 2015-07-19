@@ -209,9 +209,12 @@ def main():
             except urllib2.HTTPError, e:
                 print >> sys.stderr, ("urlopen http error for %s: %s" %
                                       (pagename, e.code))
+                continue
             except urllib2.URLError, e:
                 print >> sys.stderr, ("urlopen url error for %s: %s" %
                                       (pagename, e.args))
+                continue
+
             endtime = time.time()
             reqtime = endtime - starttime
 
