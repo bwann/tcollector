@@ -205,7 +205,8 @@ def main():
         for key, pagename in pages.iteritems():
             starttime = time.time()
             try:
-                req = urllib2.urlopen("http://192.168.100.1/%s" % pagename)
+                req = urllib2.urlopen("http://192.168.100.1/%s" % pagename,
+                                      timeout=30)
             except urllib2.HTTPError, e:
                 print >> sys.stderr, ("urlopen http error for %s: %s" %
                                       (pagename, e.code))
